@@ -1,40 +1,59 @@
-# Cardinal for Tuna
+# Tuna Extensions
 
-A [Tuna](https://tunaformac.com) extension that searches every file on your Mac with
-[Cardinal](https://github.com/cardisoft/cardinal), as you type.
+My extensions for [Tuna](https://tunaformac.com), the macOS launcher.
 
-Type `file` in Tuna, select "Search Files", press → to step into it, and type a name.
-If a name matches nothing, the search is retried with its words split at punctuation
-(`change.md` finds `changes.md`). Results come from
-Cardinal's full-disk index, ranked for a launcher: your own files first, system files,
-app internals, caches and build output last. Every result is a normal Tuna file, so
-Open, Reveal in Finder, Quick Look and other file actions work. When Cardinal finds more
-than 50 matches, the last row opens Cardinal with the same search.
+| Extension | What it does |
+| --- | --- |
+| [Keep Awake](KeepAwake) | Keep the Mac awake for a set time and see how long is left |
+| [Cardinal](Cardinal) | Search every file on the Mac with [Cardinal](https://github.com/cardisoft/cardinal) as you type |
 
-Cardinal's query syntax works too: `ext:pdf invoice`, `size:>100MB`, `in:~/Documents report`.
+![Keep Awake](media/screenshots/keep-awake/status-on.png)
 
-## Requirements
+## Install
 
-- Cardinal with the local search API, from the `local-search-api` branch of
-  [Yuchen971/cardinal](https://github.com/Yuchen971/cardinal). Cardinal must be running;
-  it keeps running in the background after you close its window.
-- Tuna 0.96 or later.
-- To build: a Swift 6.4 or later toolchain (TunaKit 1.22 is built with Swift 6.4), for
-  example the macOS toolchain from [swift.org](https://www.swift.org/install/macos/).
+These extensions are not in the Tuna store. Tuna loads them from its development
+extensions folder. They run inside Tuna's process, so only install builds you trust.
 
-## Build and install
+Requires Tuna 0.96 or later on an Apple silicon Mac.
+
+### From a release
+
+1. Download the extension's zip from [Releases](../../releases) and unzip it, for example
+   `KeepAwakeTuna.framework`.
+2. Remove the download quarantine and move it into Tuna's development extensions folder:
+   ```sh
+   cd ~/Downloads
+   xattr -dr com.apple.quarantine KeepAwakeTuna.framework
+   mkdir -p ~/Library/Application\ Support/Tuna/ExtensionsDev
+   rm -rf ~/Library/Application\ Support/Tuna/ExtensionsDev/KeepAwakeTuna.framework
+   mv KeepAwakeTuna.framework ~/Library/Application\ Support/Tuna/ExtensionsDev/
+   ```
+3. Quit and reopen Tuna.
+
+### From source
+
+Needs a Swift 6.4 or later toolchain (TunaKit 1.22 is built with Swift 6.4), for example
+the macOS toolchain from [swift.org](https://www.swift.org/install/macos/).
 
 ```sh
-./scripts/install.sh --restart   # build, copy into Tuna's ExtensionsDev folder, restart Tuna
-xcrun --toolchain swift swift test
+./scripts/install.sh all --restart        # build every extension, install, restart Tuna
+./scripts/install.sh KeepAwake --restart  # just one
 ```
 
 Set `TOOLCHAIN` to pick a specific toolchain identifier (default: the newest one from
 swift.org).
 
-## How it talks to Cardinal
+## Develop
 
-Cardinal listens on `127.0.0.1` and writes its port and a fresh access token to
-`~/Library/Application Support/com.cardinal.one/local-api.json` on every launch. Only the
-current user can read that file. The extension reads it, calls `GET /v1/search`, and calls
-`POST /v1/show` for "Show all results in Cardinal".
+```sh
+xcrun --toolchain swift swift test   # tests for every extension
+./scripts/package.sh KeepAwake       # dist/KeepAwakeTuna-<version>.zip for a release
+```
+
+Each extension is a folder with its `Sources`, `Tests`, `Info.plist` (bundle id, version,
+principal class) and README. All of them share one Swift package, one TunaKit pin and the
+scripts in `scripts/`. Release tags name the extension, e.g. `keepawake-v0.1.0`.
+
+## License
+
+[MIT](LICENSE)

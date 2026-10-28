@@ -1,8 +1,62 @@
 # 变更记录
 
+## 2026-10-27
+
+### 两个插件放进同一个仓库
+
+- Cardinal 和 Keep Awake 现在放在同一个仓库里，各占一个文件夹，各有自己的说明页。仓库首页用一张表列出每个插件做什么。
+- 对用户：
+  - 从 Releases 下载时，每个插件单独一个压缩包，比如 "KeepAwakeTuna-0.1.0.zip"、"CardinalTuna-0.1.0.zip"，按需装。
+  - 从源码装时，可以一次装全部，也可以只装一个。
+  - 已经装好的插件不用重装，名字没变。
+- 版本号各自独立：每个插件发布时单独打版本标签，比如 "keepawake-v0.1.0"。
+
+### Keep Awake 第一版：在 Tuna 里让 Mac 保持唤醒，并能看到剩余时间
+
+- **入口**：在 Tuna 里输入 "awake"（也能搜 "caffeinate"、"stay awake"、"prevent sleep"），找到 "Keep Awake"。
+- **状态就写在入口下面那行**，每次打开 Tuna 都是最新的：
+  - 没开："Off"
+  - 开了有时限："On · 44 min left · until 9:51 PM"，同时写剩余时间和结束时刻，不用自己算。
+  - 开了没时限："On · until you stop"
+
+  ![状态：关闭](../media/screenshots/keep-awake/status-off.png)
+  ![状态：开启中](../media/screenshots/keep-awake/status-on.png)
+
+- **选时长**：选中 "Keep Awake" 后按 → 进入，列出 "15 min"、"30 min"、"1 hr"、"2 hr"、"4 hr"、"Until I stop"。每一行下面写选了以后到几点结束，比如 "Until 9:22 PM"。过了午夜写 "tomorrow"。回车立即生效，Tuna 窗口关闭。
+
+  ![未开启时的列表](../media/screenshots/keep-awake/menu-off.png)
+
+- **开着的时候再进去**，最上面多两行：
+  - "Stop"：下面写还剩多少、到几点。没时限的写 "On since 2:10 PM"。
+  - "Add 30 min"：在现在的结束时间上再加 30 分钟，下面写加完到几点。没时限时不出现。
+  - 再选一个时长，就从现在起重新算，替换原来的设置。
+  - 已经是 "Until I stop" 时，这一行不再出现。
+
+  ![开启中的列表](../media/screenshots/keep-awake/menu-on.png)
+
+- **直接打字输入时长**：进入后可以直接打 "45"、"45m"、"1h30m"、"1.5 hours"，或者打时刻 "until 6pm"、"6:30 pm"、"18:00"。
+  - 只打数字按分钟算，所以 "45" 是 45 分钟。
+  - "until 6" 这种没写上午下午的，取最近的那个 6 点。
+  - 打的内容排第一行，下面跟着名字能对上的其他行，比如打 "stop" 会出现 "Stop" 和 "Until I stop"。
+  - 看不懂时提示 "Can’t read “…”"，并给出写法示例 "Try 45m, 1h30m or until 6pm"。
+  - 一次最多 24 小时。超过时提示 "Up to 24 hr"，更长请选 "Until I stop"。
+
+  ![打字输入 45m](../media/screenshots/keep-awake/typed-45m.png)
+  ![打字输入 stop](../media/screenshots/keep-awake/typed-stop.png)
+
+- **屏幕要不要一起保持亮着**：在 Tuna 的 Settings → Sources → Keep Awake 里设置 "Screen"：
+  - "Keep screen on"（默认）：屏幕和电脑都不睡，适合看东西、演示。
+  - "Let screen turn off"：屏幕可以按平时设置熄灭或锁屏，电脑继续运行，适合下载、跑任务。
+  - 改了设置只对下一次开启生效。"Add 30 min" 沿用当前这次的设置。
+- **业务规则**
+  - 时间到了自动结束，Mac 恢复平时的睡眠设置。到点不提醒，Tuna 插件没有通知功能。
+  - 退出或重启 Tuna 不影响正在进行的计时，重新打开 Tuna 状态还在。重启电脑后计时清零。
+  - 和 macOS 自带的防休眠一样，笔记本合上盖子（没接外接显示器）照样会睡。
+  - 入口图标固定是棕色咖啡杯，开没开看下面那行字。
+
 ## 2026-10-22
 
-### 第一版：在 Tuna 里用 Cardinal 搜全盘文件
+### Cardinal 第一版：在 Tuna 里用 Cardinal 搜全盘文件
 
 - **入口**：在 Tuna 里输入 "file"（或 "find"、"cardinal"），选中 "Search Files" 这一项后按 → 进入。进入后，接下来输入的内容都交给 Cardinal 搜索。
   - 入口叫 "Search Files" 而不是 "Cardinal"：用户想的是"找文件"这件事，不会去想背后用的是哪个应用。
